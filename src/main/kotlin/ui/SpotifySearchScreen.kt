@@ -1,10 +1,11 @@
 package ui
 
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRowFor
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -17,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.guru.composecookbook.ui.demoui.spotify.data.Album
@@ -26,13 +28,10 @@ import utils.horizontalGradientBackground
 
 @Composable
 fun SpotifySearchScreen(onAlbumSelected: (Album) -> Unit) {
-    val scrollState = rememberScrollState(0f)
+    val scrollState = rememberScrollState(0)
     val surfaceGradient = listOf(MaterialTheme.colors.secondary, MaterialTheme.colors.surface)
 
-    ScrollableColumn(
-        scrollState = scrollState,
-        modifier = Modifier.fillMaxSize().horizontalGradientBackground(surfaceGradient)
-    ) {
+    Column(Modifier.fillMaxSize().horizontalGradientBackground(surfaceGradient).verticalScroll(rememberScrollState())) {
         Column(modifier = Modifier.horizontalGradientBackground(surfaceGradient)) {
             Spacer(modifier = Modifier.height(40.dp))
             SpotifySearchBar()
@@ -48,10 +47,12 @@ fun SpotifySearchScreen(onAlbumSelected: (Album) -> Unit) {
 @Composable
 fun SpotifySearchLane(onAlbumSelected: (Album) -> Unit) {
     val items = remember { SpotifyDataProvider.albums.asReversed() }
-    LazyRowFor(items = items, modifier = Modifier.padding(start = 8.dp)) {
-        SpotifySearchGridItem(it, modifier = Modifier.width(400.dp)) {
-            onAlbumSelected.invoke(it)
-        }
+    LazyRow(Modifier.padding(start = 8.dp)) {
+        items(items = items, itemContent = {
+            SpotifySearchGridItem(it, modifier = Modifier.width(400.dp)) {
+                onAlbumSelected.invoke(it)
+            }
+        })
     }
 }
 
@@ -70,7 +71,7 @@ fun SpotifySearchBar() {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Modifier.padding(start = 8.dp)
-            Icon(Icons.Default.Search, tint = MaterialTheme.colors.surface)
+            Icon(rememberVectorPainter(Icons.Default.Search), "Search", tint = MaterialTheme.colors.surface)
             Text(
                 text = "Artists, songs, or podcasts",
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),

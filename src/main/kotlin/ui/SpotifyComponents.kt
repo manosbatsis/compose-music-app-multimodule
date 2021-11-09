@@ -1,6 +1,7 @@
 package ui
 
-import androidx.compose.animation.animate
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,22 +15,23 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.drawLayer
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asDesktopBitmap
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.imageFromResource
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.loadImageBitmap
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.useResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.guru.composecookbook.ui.demoui.spotify.data.Album
 import graySurface
-import org.jetbrains.skija.Bitmap
+import org.jetbrains.skia.Bitmap
 import spotifyGreen
 import utils.horizontalGradientBackground
 
@@ -46,8 +48,8 @@ fun SpotifyHomeGridItem(album: Album) {
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                imageFromResource(album.imageId),
-                modifier = Modifier.preferredSize(55.dp),
+                painterResource(album.imageId), "Item",
+                modifier = Modifier.size(55.dp),
                 contentScale = ContentScale.Crop
             )
             Text(
@@ -59,6 +61,7 @@ fun SpotifyHomeGridItem(album: Album) {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SpotifyLaneItem(album: Album, onclick: () -> Unit) {
     val album = remember { album }
@@ -77,13 +80,11 @@ fun SpotifyLaneItem(album: Album, onclick: () -> Unit) {
         .clickable { onclick.invoke() }
     ) {
         Column(
-            modifier = Modifier
-                .preferredWidth(240.dp).padding(24.dp)
+            modifier = Modifier.width(240.dp).padding(24.dp)
         ) {
             Image(
-                imageFromResource(album.imageId),
-                modifier = Modifier.preferredWidth(240.dp)
-                    .preferredHeight(200.dp),
+                painterResource(album.imageId), "Album",
+                modifier = Modifier.width(240.dp).height(200.dp),
                 contentScale = ContentScale.Crop
             )
             Text(
@@ -95,6 +96,8 @@ fun SpotifyLaneItem(album: Album, onclick: () -> Unit) {
                 modifier = Modifier.padding(vertical = 16.dp)
             )
         }
+        val alpha by animateFloatAsState(if (showPlayButton) 1f else 0f)
+        val scale by animateFloatAsState(if (scalePlayButton) 1.3f else 1f)
         IconButton(
             onClick = {},
             modifier = Modifier
@@ -108,31 +111,33 @@ fun SpotifyLaneItem(album: Album, onclick: () -> Unit) {
                         false
                     }
                 )
-                .alpha(animate(if (showPlayButton) 1f else 0f, animSpec = tween(500)))
+                .alpha(alpha)
                 .align(Alignment.BottomEnd)
                 .padding(bottom = 90.dp, end = 30.dp)
                 .clip(CircleShape)
                 .graphicsLayer(
-                    scaleX = animate(if (scalePlayButton) 1.3f else 1f),
-                    scaleY = animate(if (scalePlayButton) 1.3f else 1f)
+                    scaleX = scale,
+                    scaleY = scale
                 )
                 .background(spotifyGreen)
         ) {
-            Icon(Icons.Default.PlayArrow, tint = MaterialTheme.colors.onSurface)
+            Icon(rememberVectorPainter(Icons.Default.PlayArrow), "Play", tint = MaterialTheme.colors.onSurface)
         }
     }
 }
 
 @Composable
 fun SpotifySearchGridItem(album: Album, modifier: Modifier = Modifier, onclick: () -> Unit) {
-    val dominantColor = remember(album.id) { getDominantColor(imageFromResource(album.imageId).asDesktopBitmap()) }
+    val dominantColor = remember(album.id) {
+        getDominantColor(useResource(album.imageId) { loadImageBitmap(it).asSkiaBitmap() })
+    }
     val dominantGradient = remember(album.id) { listOf(dominantColor, dominantColor.copy(alpha = 0.6f)) }
 
     Row(
         modifier = modifier
             .padding(12.dp)
             .clickable(onClick = { onclick.invoke() })
-            .preferredHeight(220.dp)
+            .height(220.dp)
             .clip(RoundedCornerShape(8.dp))
             .horizontalGradientBackground(dominantGradient),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -144,11 +149,11 @@ fun SpotifySearchGridItem(album: Album, modifier: Modifier = Modifier, onclick: 
             modifier = Modifier.padding(8.dp)
         )
         Image(
-            imageFromResource(album.imageId),
+            painterResource(album.imageId), album.descriptions,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.preferredSize(100.dp)
+            modifier = Modifier.size(100.dp)
                 .align(Alignment.Bottom)
-                .drawLayer(translationX = 40f, rotationZ = 32f, shadowElevation = 16f)
+                .graphicsLayer(translationX = 40f, rotationZ = 32f, shadowElevation = 16f)
         )
     }
 }

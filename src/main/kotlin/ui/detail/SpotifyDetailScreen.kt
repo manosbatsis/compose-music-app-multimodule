@@ -1,6 +1,7 @@
 package ui.detail
 
-import androidx.compose.animation.animate
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -21,8 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asDesktopBitmap
-import androidx.compose.ui.graphics.imageFromResource
+import androidx.compose.ui.graphics.asSkiaBitmap
+import androidx.compose.ui.res.loadImageBitmap
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.useResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -36,8 +39,8 @@ import utils.verticalGradientBackground
 @Composable
 fun SpotifyDetailScreen(album: Album, onBack: () -> Unit) {
     val album = remember(album.id) { album }
-    val scrollState = rememberScrollState(0f)
-    val dominantColor = remember(album.id) { getDominantColor(imageFromResource(album.imageId).asDesktopBitmap()) }
+    val scrollState = rememberScrollState(0)
+    val dominantColor = remember(album.id) { getDominantColor(useResource(album.imageId) { loadImageBitmap(it).asSkiaBitmap() }) }
     val surface = MaterialTheme.colors.surface
     val dominantGradient = remember(album.id) { listOf(dominantColor, surface) }
     val surfaceGradient =
@@ -59,13 +62,14 @@ fun AnimatedToolBar(album: Album, scrollState: ScrollState, dominantColor: Color
         modifier = Modifier
             .fillMaxWidth()
             .horizontalGradientBackground(
-                if (Dp(scrollState.value) < 700.dp)
+                if (Dp(scrollState.value.toFloat()) < 700.dp)
                     listOf(Color.Transparent, Color.Transparent) else listOf(dominantColor, dominantColor)
             )
             .padding(horizontal = 8.dp, vertical = 4.dp)
     ) {
         Icon(
             imageVector = Icons.Default.ArrowBack,
+            "Arrow Back",
             tint = MaterialTheme.colors.onSurface,
             modifier = Modifier.clickable { onBack.invoke() })
         Text(
@@ -75,7 +79,7 @@ fun AnimatedToolBar(album: Album, scrollState: ScrollState, dominantColor: Color
                 .padding(16.dp)
                 .alpha(((scrollState.value + 0.001f) / 1000).coerceIn(0f, 1f))
         )
-        Icon(imageVector = Icons.Default.MoreVert, tint = MaterialTheme.colors.onSurface)
+        Icon(imageVector = Icons.Default.MoreVert, "More", tint = MaterialTheme.colors.onSurface)
     }
 }
 
@@ -86,13 +90,13 @@ fun TopAlbumInfoOverlay(scrollState: ScrollState) {
     Box(
         modifier = Modifier.fillMaxWidth()
             .height(380.dp)
-            .background(MaterialTheme.colors.surface.copy(alpha = animate(dynamicAlpha)))
+            .background(MaterialTheme.colors.surface.copy(alpha = animateFloatAsState(dynamicAlpha).value))
     )
 }
 
 @Composable
 fun SongsScrollableContent(scrollState: ScrollState, surfaceGradient: List<Color>) {
-    ScrollableColumn(scrollState = scrollState, modifier = Modifier) {
+    Column(Modifier.verticalScroll(scrollState)) {
         Spacer(modifier = Modifier.height(380.dp))
         Column(modifier = Modifier.verticalGradientBackground(surfaceGradient)) {
             SongListScrollingSection()
@@ -120,11 +124,11 @@ fun PlayButtons() {
                 .clip(CircleShape)
                 .background(spotifyGreen)
         ) {
-            Icon(Icons.Default.PlayArrow, tint = MaterialTheme.colors.onSurface)
+            Icon(Icons.Default.PlayArrow, "Play", tint = MaterialTheme.colors.onSurface)
         }
-        Icon(imageVector = Icons.Default.Favorite, tint = spotifyGreen, modifier = Modifier.padding(16.dp))
+        Icon(imageVector = Icons.Default.Favorite, "Favorite", tint = spotifyGreen, modifier = Modifier.padding(16.dp))
         Icon(
-            imageVector = Icons.Default.MoreVert,
+            imageVector = Icons.Default.MoreVert, "More",
             tint = MaterialTheme.colors.onSecondary,
             modifier = Modifier.padding(16.dp)
         )
@@ -135,12 +139,12 @@ fun PlayButtons() {
 fun TopAlbumInfoSection(album: Album, scrollState: ScrollState) {
     Row(modifier = Modifier.padding(top = 100.dp, start = 16.dp), verticalAlignment = Alignment.CenterVertically) {
         //animate as scroll value increase but not fast so divide by random number 50
-        val dynamicValue = (250.dp - Dp(scrollState.value / 10)).coerceIn(10.dp, 250.dp)
-        val animateImageSize = animate(dynamicValue)
+        val dynamicValue = (250.dp - Dp(scrollState.value.toFloat() / 10)).coerceIn(10.dp, 250.dp)
+        val animateImageSize = animateDpAsState(dynamicValue).value
         Image(
-            imageFromResource(album.imageId),
+            painterResource(album.imageId), "Album",
             modifier = Modifier
-                .preferredSize(animateImageSize)
+                .size(animateImageSize)
                 .padding(8.dp)
         )
         Column {

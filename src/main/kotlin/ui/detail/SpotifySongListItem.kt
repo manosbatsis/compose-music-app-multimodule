@@ -4,7 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.MaterialTheme.typography
@@ -16,8 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.imageFromResource
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,9 +32,9 @@ fun SpotifySongListItem(album: Album) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
-            imageFromResource(album.imageId),
+            painterResource(album.imageId), "Album",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.preferredSize(55.dp).padding(4.dp)
+            modifier = Modifier.size(55.dp).padding(4.dp)
         )
         Column(modifier = Modifier.padding(horizontal = 4.dp).weight(1f)) {
             Text(
@@ -53,13 +53,13 @@ fun SpotifySongListItem(album: Album) {
         }
         if (album.id % 3 == 0) {
             Icon(
-                imageVector = Icons.Default.Favorite,
+                imageVector = Icons.Default.Favorite, "Favorite",
                 tint = MaterialTheme.colors.onSecondary,
-                modifier = Modifier.padding(4.dp).preferredSize(20.dp)
+                modifier = Modifier.padding(4.dp).size(20.dp)
             )
         }
         Icon(
-            imageVector = Icons.Default.MoreVert,
+            imageVector = Icons.Default.MoreVert, "More",
             tint = MaterialTheme.colors.onSecondary,
             modifier = Modifier.padding(4.dp)
         )

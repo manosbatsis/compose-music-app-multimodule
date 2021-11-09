@@ -1,11 +1,9 @@
 package ui
 
 import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredSize
-import androidx.compose.foundation.lazy.LazyRowFor
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.MaterialTheme.typography
@@ -15,9 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.LinearGradient
-import androidx.compose.ui.graphics.imageFromResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.guru.composecookbook.ui.demoui.spotify.data.Album
@@ -27,7 +25,7 @@ import utils.horizontalGradientBackground
 
 @Composable
 fun SpotifyHome(onAlbumSelected: (Album) -> Unit) {
-    val scrollState = rememberScrollState(0f)
+    val scrollState = rememberScrollState(0)
     val surfaceGradient = listOf(MaterialTheme.colors.secondary, MaterialTheme.colors.surface)
 
     Surface {
@@ -48,10 +46,7 @@ fun SpotifyTitle(text: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun SpotifyHomeContent(scrollState: ScrollState, surfaceGradient: List<Color>, onAlbumSelected: (Album) -> Unit) {
-    ScrollableColumn(
-        scrollState = scrollState,
-        modifier = Modifier.horizontalGradientBackground(surfaceGradient).padding(8.dp)
-    ) {
+    Column(Modifier.verticalScroll(rememberScrollState()).horizontalGradientBackground(surfaceGradient).padding(8.dp)) {
         Spacer(modifier = Modifier.height(50.dp))
         SpotifyTitle("Spotify Stories")
         SpotifyStories()
@@ -62,18 +57,20 @@ fun SpotifyHomeContent(scrollState: ScrollState, surfaceGradient: List<Color>, o
 
 @Composable
 fun SpotifyStories() {
-    val items = remember { SpotifyDataProvider.albums }
-    LazyRowFor(items = items) {
-        SpotifyStoryItem(it)
+    val i = remember { SpotifyDataProvider.albums }
+    LazyRow {
+        items(i) {
+            SpotifyStoryItem(it)
+        }
     }
 }
 
 @Composable
 fun SpotifyStoryItem(album: Album) {
     Image(
-        bitmap = imageFromResource(album.imageId),
+        painterResource(album.imageId), "Album Image",
         modifier = Modifier.padding(16.dp)
-            .preferredSize(100.dp)
+            .size(100.dp)
             .clip(CircleShape)
             .border(shape = CircleShape, border = BorderStroke(3.dp, brush = spotifyGradient()))
     )
@@ -92,49 +89,17 @@ fun HomeLanesSection(onAlbumSelected: (Album) -> Unit) {
 fun SpotifyLane(index: Int, onAlbumSelected: (Album) -> Unit) {
     val itemsEven = remember { SpotifyDataProvider.albums }
     val itemsOdd = remember { SpotifyDataProvider.albums.asReversed() }
-    LazyRowFor(if (index % 2 == 0) itemsEven else itemsOdd) {
-        SpotifyLaneItem(album = it) {
-            onAlbumSelected.invoke(it)
+
+    LazyRow {
+        items(itemsEven) {
+            SpotifyLaneItem(it) { onAlbumSelected.invoke(it) }
+        }
+        items(itemsOdd) {
+            SpotifyLaneItem(it) { onAlbumSelected.invoke(it) }
         }
     }
+    // TODO: not quite right.
 }
 
 @Composable
-fun spotifyGradient() = LinearGradient(spotifyGradient, startX = 0f, endX = 0f, startY = 0f, endY = 100f)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+fun spotifyGradient() = Brush.Companion.verticalGradient(colors = spotifyGradient, startY = 0f, endY = 100f)

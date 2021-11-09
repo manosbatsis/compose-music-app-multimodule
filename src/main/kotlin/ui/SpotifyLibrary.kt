@@ -1,22 +1,21 @@
 package ui
 
-import androidx.compose.animation.animate
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.drawLayer
-import androidx.compose.ui.graphics.imageFromResource
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import utils.horizontalGradientBackground
 
 @Composable
 fun SpotifyLibrary() {
-    ScrollableColumn(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .horizontalGradientBackground(listOf(MaterialTheme.colors.secondary, MaterialTheme.colors.surface))
@@ -34,26 +33,26 @@ fun SpotifyLibrary() {
             draw4 = false
         })) {
             Image(
-                imageFromResource("bp.jpg"),
-                modifier = Modifier.preferredSize(imageSize).drawLayer(
-                    shadowElevation = animate(if (draw2) 30f else 5f),
-                    translationX = animate(target = if (draw2) 520f else 0f),
+                painterResource("bp.jpg"), "BP",
+                modifier = Modifier.size(imageSize).graphicsLayer(
+                    shadowElevation = animateFloatAsState(if (draw2) 30f else 5f).value,
+                    translationX = animateFloatAsState(if (draw2) 520f else 0f).value,
                     translationY = 0f,
                 )
             )
             Image(
-                imageFromResource("dualipa.jpeg"),
-                modifier = Modifier.preferredSize(imageSize).drawLayer(
-                    shadowElevation = animate(if (draw2) 30f else 10f),
-                    translationX = animate(target = if (draw2) -520f else 0f),
-                    translationY = animate(target = if (draw2) 0f else 30f)
+                painterResource("dualipa.jpeg"), "Dualipa",
+                modifier = Modifier.size(imageSize).graphicsLayer(
+                    shadowElevation = animateFloatAsState(if (draw2) 30f else 10f).value,
+                    translationX = animateFloatAsState(if (draw2) -520f else 0f).value,
+                    translationY = animateFloatAsState(if (draw2) 0f else 30f).value,
                 ).clickable(onClick = { draw2 = !draw2 })
             )
             Image(
-                imageFromResource("tylor.jpeg"),
-                modifier = Modifier.preferredSize(imageSize).drawLayer(
-                    shadowElevation = animate(if (draw2) 30f else 5f),
-                    translationY = animate(target = if (draw2) 0f else 50f)
+                painterResource("tylor.jpeg"), "Tylor",
+                modifier = Modifier.size(imageSize).graphicsLayer(
+                    shadowElevation = animateFloatAsState(if (draw2) 30f else 5f).value,
+                    translationY = animateFloatAsState(if (draw2) 0f else 50f).value
                 ).clickable(onClick = { draw2 = !draw2 })
             )
         }
@@ -65,29 +64,29 @@ fun SpotifyLibrary() {
             draw2 = false
         }) {
             Image(
-                imageFromResource("katy.jpg"),
-                modifier = Modifier.preferredSize(imageSize).drawLayer(
-                    shadowElevation = animate(if (draw4) 30f else 5f),
-                    translationX = animate(target = if (draw4) 320f else 0f),
-                    rotationZ = animate(target = if (draw4) 45f else 0f),
+                painterResource("katy.jpg"), "Katy",
+                modifier = Modifier.size(imageSize).graphicsLayer(
+                    shadowElevation = animateFloatAsState(if (draw4) 30f else 5f).value,
+                    translationX = animateFloatAsState(if (draw4) 320f else 0f).value,
+                    rotationZ = animateFloatAsState(if (draw4) 45f else 0f).value,
                     translationY = 0f
                 )
             )
             Image(
-                imageFromResource("ed2.jpg"),
-                modifier = Modifier.preferredSize(imageSize).drawLayer(
-                    shadowElevation = animate(if (draw4) 30f else 10f),
-                    translationX = animate(target = if (draw4) -320f else 0f),
-                    rotationZ = animate(target = if (draw4) 45f else 0f),
-                    translationY = animate(target = if (draw4) 0f else 30f)
+                painterResource("ed2.jpg"), "Ed2",
+                modifier = Modifier.size(imageSize).graphicsLayer(
+                    shadowElevation = animateFloatAsState(if (draw4) 30f else 10f).value,
+                    translationX = animateFloatAsState(if (draw4) -320f else 0f).value,
+                    rotationZ = animateFloatAsState(if (draw4) 45f else 0f).value,
+                    translationY = animateFloatAsState(if (draw4) 0f else 30f).value
                 )
             )
             Image(
-                imageFromResource("camelia.jpeg"),
-                modifier = Modifier.preferredSize(imageSize).drawLayer(
-                    shadowElevation = animate(if (draw4) 30f else 5f),
-                    translationY = animate(target = if (draw4) 0f else 50f),
-                    rotationZ = animate(target = if (draw4) 45f else 0f)
+                painterResource("camelia.jpeg"), "Camelia",
+                modifier = Modifier.size(imageSize).graphicsLayer (
+                    shadowElevation = animateFloatAsState(if (draw4) 30f else 5f).value,
+                    translationY = animateFloatAsState(if (draw4) 0f else 50f).value,
+                    rotationZ = animateFloatAsState(if (draw4) 45f else 0f).value
                 )
             )
         }

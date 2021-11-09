@@ -50,7 +50,7 @@ object SpotifyDataProvider {
         imageId = "adele.jpeg"
     )
 
-    val albums = mutableListOf(
+    val albums: MutableList<Album> = mutableListOf(
         Album(
             id = 1,
             artist = "Ed Sheeran",
