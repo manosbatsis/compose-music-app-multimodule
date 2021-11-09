@@ -17,6 +17,10 @@ repositories {
 
 dependencies {
     implementation(compose.desktop.currentOs)
+
+    // TEMP HACK
+    implementation("org.jetbrains.skiko:skiko:0.5.10")
+    implementation("org.jetbrains.skiko:skiko-jvm-runtime-macos-x64:0.5.10")
 }
 
 tasks.withType<KotlinCompile>() {
@@ -27,4 +31,9 @@ compose.desktop {
     application {
         mainClass = "MainKt"
     }
+}
+
+tasks.register("copyJars", Copy::class.java) {
+    into("$projectDir/build/all-jars")
+    from(configurations.runtimeClasspath, tasks.getByName("jar"))
 }

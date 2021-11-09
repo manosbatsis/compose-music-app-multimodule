@@ -6,5 +6,4 @@ pluginManagement {
     }
 
 }
-rootProject.name = "ComposeSpotifyDesktop"
-
+rootProject.name = "compose-music-sample"
