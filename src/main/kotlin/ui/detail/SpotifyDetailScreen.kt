@@ -137,7 +137,7 @@ fun PlayButtons() {
 
 @Composable
 fun TopAlbumInfoSection(album: Album, scrollState: ScrollState) {
-    Row(modifier = Modifier.padding(top = 100.dp, start = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(modifier = Modifier.padding(top = 100.dp, start = 16.dp), verticalAlignment = Alignment.Top) {
         //animate as scroll value increase but not fast so divide by random number 50
         val dynamicValue = (250.dp - Dp(scrollState.value.toFloat() / 10)).coerceIn(10.dp, 250.dp)
         val animateImageSize = animateDpAsState(dynamicValue).value

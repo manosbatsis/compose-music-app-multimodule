@@ -25,11 +25,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.toFontFamily
+import androidx.compose.ui.text.platform.Font
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Window
-import androidx.compose.ui.window.application
-import androidx.compose.ui.window.rememberWindowState
+import androidx.compose.ui.window.WindowPlacement
+import androidx.compose.ui.window.WindowState
+import androidx.compose.ui.window.singleWindowApplication
 import com.guru.composecookbook.ui.demoui.spotify.data.Album
 import com.guru.composecookbook.ui.demoui.spotify.data.SpotifyDataProvider
 import ui.SpotifyHome
@@ -39,16 +42,23 @@ import ui.SpotifySearchScreen
 import ui.detail.SpotifyDetailScreen
 
 
-fun main() = application {
-    Window(
-        title = "Spotify Compose",
-        state = rememberWindowState(width = 300.dp, height = 300.dp),
-        onCloseRequest = ::exitApplication
+fun main() = singleWindowApplication(title = "Spotify Compose", state = WindowState(placement = WindowPlacement.Maximized)) {
+    val darkTheme = remember { mutableStateOf(true) }
+    val roboto = remember { Font("Roboto-Light.ttf").toFontFamily() }
+    MaterialTheme(
+        colors = if (darkTheme.value) DarkGreenColorPalette else LightGreenColorPalette,
+        typography = typography.copy(
+            h4 = typography.h4.copy(fontFamily = roboto),
+            h5 = typography.h5.copy(fontFamily = roboto),
+            h6 = typography.h6.copy(fontFamily = roboto),
+            body1 = typography.body1.copy(fontFamily = roboto),
+            body2 = typography.body2.copy(fontFamily = roboto),
+            button = typography.button.copy(fontFamily = roboto),
+            caption = typography.caption.copy(fontFamily = roboto),
+            overline = typography.overline.copy(fontFamily = roboto)
+        )
     ) {
-        val darkTheme = remember { mutableStateOf(true) }
-        MaterialTheme(colors = if (darkTheme.value) DarkGreenColorPalette else LightGreenColorPalette) {
-            SpotifyApp(darkTheme)
-        }
+        SpotifyApp(darkTheme)
     }
 }
 
@@ -103,10 +113,9 @@ fun SpotifySideBar(
         horizontalAlignment = Alignment.Start
     ) {
         Spacer(modifier = Modifier.height(32.dp))
-        Image(
-            painterResource(if (darkTheme.value) "spotify.png" else "spotifydark.png"), "Spotify",
-            modifier = Modifier.padding(end = 16.dp, top = 16.dp, bottom = 16.dp),
-        )
+
+        Logo(darkTheme.value)
+
         Spacer(modifier = Modifier.height(16.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -143,6 +152,26 @@ fun SpotifySideBar(
             selectedIndex.value = it
         }
         Spacer(modifier = Modifier.height(100.dp))
+    }
+}
+
+@Composable
+private fun Logo(darkTheme: Boolean) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        // Load the headphones from FontAwesome.
+        val fontAwesome = remember { Font("fa_solid_900.ttf").toFontFamily() }
+        Text(
+            0xf58f.toChar().toString(),
+            Modifier.padding(16.dp),
+            fontFamily = fontAwesome,
+            fontSize = 3.em,
+            color = if (darkTheme) Color.White else Color.Black
+        )
+        Text(
+            "Music",
+            color = if (darkTheme) Color.White else Color.Black,
+            fontSize = 3.em
+        )
     }
 }
 
@@ -232,7 +261,8 @@ fun SideBarNavItem(title: String, icon: ImageVector, selected: Boolean, onClick:
             .fillMaxWidth().background(animatedBackgroundColor.value).clip(RoundedCornerShape(4.dp)).padding(16.dp)
             .clickable {
                 onClick.invoke()
-            }
+            },
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(rememberVectorPainter(icon), title, tint = animatedContentColor.value)
         Text(
