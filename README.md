@@ -32,9 +32,7 @@ accelerates UI development. Quickly bring your app to life with less code, power
 
 ## Credits
 
-This app was originally written by [Gurupreet Singh](https://github.com/Gurupreet) for an early version of JetPack Compose. <a 
-href="https://twitter.com/_gurupreet"> <img src="https://img.shields.io/twitter/url?label=follow&style=social&url=https%3A%2F%2Ftwitter.
-com%2F_gurupreet" /></a>
+This app was originally written by [Gurupreet Singh](https://github.com/Gurupreet) for an early version of JetPack Compose.
 
 It was ported to Compose 1.0 and the package config created by [Hydraulic](https://hydraulic.dev) to demonstrate how easy it is to 
 write and update a slick JVM UI with modern tools.

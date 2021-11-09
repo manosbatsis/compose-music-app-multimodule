@@ -91,14 +91,10 @@ fun SpotifyLane(index: Int, onAlbumSelected: (Album) -> Unit) {
     val itemsOdd = remember { SpotifyDataProvider.albums.asReversed() }
 
     LazyRow {
-        items(itemsEven) {
-            SpotifyLaneItem(it) { onAlbumSelected.invoke(it) }
-        }
-        items(itemsOdd) {
+        items(if (index % 2 == 0) itemsEven else itemsOdd) {
             SpotifyLaneItem(it) { onAlbumSelected.invoke(it) }
         }
     }
-    // TODO: not quite right.
 }
 
 @Composable

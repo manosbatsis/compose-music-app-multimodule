@@ -21,9 +21,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.text.platform.Font
@@ -40,25 +43,46 @@ import ui.SpotifyLibrary
 import ui.SpotifyNavType
 import ui.SpotifySearchScreen
 import ui.detail.SpotifyDetailScreen
+import java.nio.file.Path
+import kotlin.io.path.exists
+import kotlin.io.path.inputStream
 
 
-fun main() = singleWindowApplication(title = "Spotify Compose", state = WindowState(placement = WindowPlacement.Maximized)) {
-    val darkTheme = remember { mutableStateOf(true) }
-    val roboto = remember { Font("Roboto-Light.ttf").toFontFamily() }
-    MaterialTheme(
-        colors = if (darkTheme.value) DarkGreenColorPalette else LightGreenColorPalette,
-        typography = typography.copy(
-            h4 = typography.h4.copy(fontFamily = roboto),
-            h5 = typography.h5.copy(fontFamily = roboto),
-            h6 = typography.h6.copy(fontFamily = roboto),
-            body1 = typography.body1.copy(fontFamily = roboto),
-            body2 = typography.body2.copy(fontFamily = roboto),
-            button = typography.button.copy(fontFamily = roboto),
-            caption = typography.caption.copy(fontFamily = roboto),
-            overline = typography.overline.copy(fontFamily = roboto)
-        )
+fun main() {
+    singleWindowApplication(
+        title = "Sample app showing Conveyor with JetPack Compose (version ${System.getProperty("version")})",
+        state = WindowState(placement = WindowPlacement.Maximized),
+        icon = loadIcon()
     ) {
-        SpotifyApp(darkTheme)
+        val darkTheme = remember { mutableStateOf(true) }
+        val roboto = remember { Font("Roboto-Light.ttf").toFontFamily() }
+        MaterialTheme(
+            colors = if (darkTheme.value) DarkGreenColorPalette else LightGreenColorPalette,
+            typography = typography.copy(
+                h4 = typography.h4.copy(fontFamily = roboto),
+                h5 = typography.h5.copy(fontFamily = roboto),
+                h6 = typography.h6.copy(fontFamily = roboto),
+                body1 = typography.body1.copy(fontFamily = roboto),
+                body2 = typography.body2.copy(fontFamily = roboto),
+                button = typography.button.copy(fontFamily = roboto),
+                caption = typography.caption.copy(fontFamily = roboto),
+                overline = typography.overline.copy(fontFamily = roboto)
+            )
+        ) {
+            SpotifyApp(darkTheme)
+        }
+    }
+}
+
+fun loadIcon(): Painter? {
+    // app.dir is set when packaged to point at our collected inputs.
+    val appDirProp = System.getProperty("app.dir")
+    val appDir = appDirProp?.let { Path.of(it) } ?: return null
+    val iconPath = appDir.resolve("icon-256.png")
+    return if (iconPath.exists()) {
+        BitmapPainter(iconPath.inputStream().buffered().use { loadImageBitmap(it) })
+    } else {
+        null
     }
 }
 
@@ -239,10 +263,9 @@ fun PlayListsSideBar(selectedIndex: Int, onPlayListSelected: (Int) -> Unit) {
                 playlist,
                 modifier = Modifier.padding(8.dp).clickable { onPlayListSelected.invoke(index) },
                 color =
-                    if (index == selectedIndex) MaterialTheme.colors.onSurface else MaterialTheme.colors.onSecondary.copy(
-                        alpha = 0.7f
-                    )
-                ,
+                if (index == selectedIndex) MaterialTheme.colors.onSurface else MaterialTheme.colors.onSecondary.copy(
+                    alpha = 0.7f
+                ),
                 style = if (index == selectedIndex) typography.h6 else typography.body1
             )
         }

@@ -6,8 +6,8 @@ plugins {
     id("org.jetbrains.compose") version "1.0.0-beta6-dev446"
 }
 
-group = "me.guru"
-version = "1.0"
+group = "software.hydraulic.samples"
+version = "1.1"
 
 repositories {
     mavenCentral()
@@ -34,6 +34,10 @@ compose.desktop {
 }
 
 tasks.register("copyJars", Copy::class.java) {
-    into("$projectDir/build/all-jars")
+    val dest = file("$projectDir/build/all-jars")
+    into(dest)
+    doFirst {
+        dest.deleteRecursively()
+    }
     from(configurations.runtimeClasspath, tasks.getByName("jar"))
 }
