@@ -72,7 +72,7 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 ### Gradle template
-.gradle
+.gradle/**
 **/build/
 !src/**/build/
 
@@ -89,4 +89,3 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 output
-credentials.conf
