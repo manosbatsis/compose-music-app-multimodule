@@ -4,7 +4,7 @@ plugins {
     id("dev.hydraulic.conveyor") version "0.9.1"
 }
 
-version = "0.9.5"
+version = "0.9.6"
 group = "dev.hydraulic"
 
 repositories {
