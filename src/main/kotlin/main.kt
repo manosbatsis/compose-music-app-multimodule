@@ -78,7 +78,7 @@ fun loadIcon(): Painter? {
     // app.dir is set when packaged to point at our collected inputs.
     val appDirProp = System.getProperty("app.dir")
     val appDir = appDirProp?.let { Path.of(it) } ?: return null
-    val iconPath = appDir.resolve("icon-256.png")
+    val iconPath = appDir.resolve("app.ico")
     return if (iconPath.exists()) {
         BitmapPainter(iconPath.inputStream().buffered().use { loadImageBitmap(it) })
     } else {
