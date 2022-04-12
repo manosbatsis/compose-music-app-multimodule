@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "1.6.10"
     id("org.jetbrains.compose") version "1.0.1"
-    id("dev.hydraulic.conveyor") version "0.9.3"
+    id("dev.hydraulic.conveyor") version "0.9.7"
 }
 
 version = "0.9.8"
