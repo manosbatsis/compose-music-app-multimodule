@@ -50,7 +50,7 @@ import kotlin.io.path.inputStream
 
 fun main() {
     singleWindowApplication(
-        title = "Sample app showing Conveyor with JetPack Compose (version ${System.getProperty("version")})",
+        title = "Sample app showing Conveyor with JetPack Compose (version ${System.getProperty("app.version")})",
         state = WindowState(placement = WindowPlacement.Maximized),
         icon = loadIcon()
     ) {
