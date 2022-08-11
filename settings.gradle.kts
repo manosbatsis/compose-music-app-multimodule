@@ -9,3 +9,5 @@ pluginManagement {
 
 }
 rootProject.name = "compose-music-sample"
+
+include(":desktop")
